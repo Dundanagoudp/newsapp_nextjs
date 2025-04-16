@@ -56,7 +56,7 @@ export function NavigationMenuDemo() {
   }, [])
 
   if (!isMounted) {
-    return <div className="h-10 w-full" /> // Placeholder while hydrating
+    return <div className="h-10 w-full" /> 
   }
 
   return (

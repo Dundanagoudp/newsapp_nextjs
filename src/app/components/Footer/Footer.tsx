@@ -1,117 +1,84 @@
-// components/Footer.tsx
-"use client";
+'use client';
 
-import React from "react";
-import Link from "next/link";
-// Example icons from react-icons (substitute or add whichever icons you need).
-import { FaFacebookF, FaTwitter, FaYoutube, FaInstagram } from "react-icons/fa";
+import React from 'react';
+import { FaFacebookF, FaTwitter, FaInstagram } from 'react-icons/fa'; 
 
-const Footer = () => {
-  const currentYear = new Date().getFullYear();
-
+const Footer: React.FC = () => {
   return (
-    <footer className="bg-white text-gray-800 py-6 px-4 sm:px-6 lg:px-8 w-full">
-      <div className="max-w-7xl mx-auto space-y-6">
-
-        {/* Top row: Logo on left, Social icons on right */}
-        <div className="flex flex-col md:flex-row items-center justify-between">
-          {/* Left: Logo + Text */}
-          <div className="flex items-center space-x-3">
-            {/* Replace src below with your actual logo path */}
-            <img
-              src="/images/vijay-karnataka-logo.png"
-              alt="Vijay Karnataka Logo"
-              className="h-8 w-auto"
-            />
-            <div className="flex flex-col">
-              <span className="text-base font-bold">ವಿಜಯ ಕರ್ನಾಟಕ</span>
-              <span className="text-xs text-gray-500">
-                Powered by Times Internet
-              </span>
+    <footer className="bg-white border-t border-gray-200 text-sm text-gray-700">
+      <div className="max-w-7xl mx-auto px-4 py-6">
+        {/* Top Section: Logo/Powered by + Language Sites + About + Social Icons */}
+        <div className="flex flex-col gap-6 md:flex-row md:justify-between md:items-start">
+          {/* Left: Logo & Powered by */}
+          <div className="flex flex-col gap-2">
+            {/* Replace src="/vk-logo.png" with your Vijay Karnataka logo path */}
+            <div className="flex items-center space-x-2">
+              <img
+                src="/next.svg"
+                alt="Vijay Karnataka"
+                className="h-10"
+              />
             </div>
           </div>
 
-          {/* Right: Social media icons */}
-          <div className="flex space-x-4 mt-4 md:mt-0">
-            <Link href="#" aria-label="Facebook">
-              <FaFacebookF className="w-5 h-5 hover:text-blue-600 transition-colors" />
-            </Link>
-            {/* Rename FaTwitter to 'X' if you prefer, as there's no official FaX icon yet */}
-            <Link href="#" aria-label="X (Twitter)">
-              <FaTwitter className="w-5 h-5 hover:text-blue-500 transition-colors" />
-            </Link>
-            <Link href="#" aria-label="YouTube">
-              <FaYoutube className="w-5 h-5 hover:text-red-600 transition-colors" />
-            </Link>
-            <Link href="#" aria-label="Instagram">
-              <FaInstagram className="w-5 h-5 hover:text-pink-600 transition-colors" />
-            </Link>
+          {/* Middle: Language Sites & About */}
+          <div className="grid grid-cols-2 gap-8 md:gap-16">
+            {/* Language Sites */}
+            <div>
+              <h3 className="mb-2 font-semibold">Languages Sites</h3>
+              <ul className="space-y-1">
+                <li><a href="#" className="hover:underline">Hindi News</a></li>
+                <li><a href="#" className="hover:underline">Tamil News</a></li>
+                <li><a href="#" className="hover:underline">Malayalam News</a></li>
+                <li><a href="#" className="hover:underline">IndiaTimes Bangla</a></li>
+              </ul>
+              <ul className="mt-2 space-y-1">
+                <li><a href="#" className="hover:underline">English News</a></li>
+              </ul>
+            </div>
+
+            {/* About */}
+            <div>
+              <h3 className="mb-2 font-semibold">About</h3>
+              <ul className="space-y-1">
+                <li><a href="#" className="hover:underline">About Us</a></li>
+                <li><a href="#" className="hover:underline">Colombia Ads Publishing</a></li>
+                <li><a href="#" className="hover:underline">Terms and Conditions</a></li>
+                <li><a href="#" className="hover:underline">Privacy Policy</a></li>
+                <li><a href="#" className="hover:underline">Work With Us</a></li>
+              </ul>
+            </div>
           </div>
-        </div>
 
-        {/* Middle row: Links grouped by columns */}
-        <div>
-          <h2 className="text-xl font-bold mb-4">Languages Sites</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {/* Column 1 */}
-            <div className="space-y-2">
-              <Link href="#" className="block hover:text-blue-600 transition-colors">
-                Hindi News
-              </Link>
-              <Link href="#" className="block hover:text-blue-600 transition-colors">
-                Tamil News
-              </Link>
-              <Link href="#" className="block hover:text-blue-600 transition-colors">
-                Malayalam News
-              </Link>
-              <Link href="#" className="block hover:text-blue-600 transition-colors">
-                IndiaTimes Bangla
-              </Link>
-            </div>
-
-            {/* Column 2 */}
-            <div className="space-y-2">
-              <Link href="#" className="block hover:text-blue-600 transition-colors">
-                Telugu News
-              </Link>
-              <Link href="#" className="block hover:text-blue-600 transition-colors">
-                Marathi News
-              </Link>
-              <Link href="#" className="block hover:text-blue-600 transition-colors">
-                Gujarati News
-              </Link>
-              <Link href="#" className="block hover:text-blue-600 transition-colors">
-                English News
-              </Link>
-            </div>
-
-            {/* Column 3 */}
-            <div className="space-y-2">
-              <Link href="/about" className="block hover:text-blue-600 transition-colors">
-                About Us
-              </Link>
-              <Link href="#" className="block hover:text-blue-600 transition-colors">
-                Colombia Ads and Publishing
-              </Link>
-              <Link href="/terms" className="block hover:text-blue-600 transition-colors">
-                Terms and Conditions
-              </Link>
-              <Link href="/privacy" className="block hover:text-blue-600 transition-colors">
-                Privacy Policy
-              </Link>
-              <Link href="/careers" className="block hover:text-blue-600 transition-colors">
-                Work With Us
-              </Link>
+          {/* Right: Follow Us */}
+          <div className="flex flex-col gap-2">
+            <h3 className="mb-2 font-semibold">Follow Us On</h3>
+            <div className="flex items-center space-x-3">
+              {/* Using react-icons for social media links */}
+              <a href="#" aria-label="Facebook">
+                <FaFacebookF className="h-5 w-5 text-gray-700 hover:text-blue-600" />
+              </a>
+              <a href="#" aria-label="Twitter">
+                <FaTwitter className="h-5 w-5 text-gray-700 hover:text-blue-400" />
+              </a>
+              <a href="#" aria-label="Instagram">
+                <FaInstagram className="h-5 w-5 text-gray-700 hover:text-pink-500" />
+              </a>
             </div>
           </div>
         </div>
 
-        {/* Bottom row: DNPA & Copyright */}
-        <div className="text-sm text-gray-600 space-y-2">
-          <p>This website follows the DNPA&apos;s code of Conduct</p>
+        {/* Bottom Section: DNPA Code + Copyright */}
+        <div className="mt-6 border-t border-gray-200 pt-4 text-center text-xs text-gray-500">
+          <p className="mb-2">
+            This website follows the DNPA's code of Conduct
+          </p>
           <p>
-            Copyright - {currentYear} Bennett, Coleman &amp; Co. Ltd.
-            All rights reserved. For reprint rights: Times Syndication Service
+            Copyright - 2025 Karnataka, Coleman & Co. Ltd.
+            All rights reserved. For reprint rights:
+            <span className="ml-1">
+              Times Syndication Service
+            </span>
           </p>
         </div>
       </div>

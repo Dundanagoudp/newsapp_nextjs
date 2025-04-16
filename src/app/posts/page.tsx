@@ -1,9 +1,9 @@
-import NewsCards from "@/components/newscards"
+import BlogCards from "./blogcards"
 
 const page = () => {
   return (
     <div>
-      <NewsCards/>
+      <BlogCards/>
     </div>
   )
 }

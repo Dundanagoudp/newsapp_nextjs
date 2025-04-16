@@ -1,4 +1,4 @@
-import BlogCards from "./blogcards";
+import BlogCards from "@/app/posts/blogcards";
 
 const NewsCards = () => {
   return (
