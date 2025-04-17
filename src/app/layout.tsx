@@ -3,12 +3,9 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import type { ReactNode } from "react";
-import Header from "./components/Header/Header";
-import Navbar from "./components/Header/Navbar";
-import { TopBar } from "./components/Header/TopBar";
 import { ThemeProvider } from "@/components/theme-provider";
-import Footer from "./components/Footer/Footer";
-import { Providers } from "./providers"; // Optional: remove if not needed
+import { Providers } from "./providers";
+import LayoutWrapper from "./LayoutWrapper";
 
 const geistSans = Geist({
   subsets: ["latin"],
@@ -33,20 +30,14 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       suppressHydrationWarning
     >
       <body className="font-sans antialiased flex flex-col min-h-screen">
-        <Providers> 
+        <Providers>
           <ThemeProvider
             attribute="class"
             defaultTheme="system"
             enableSystem
             disableTransitionOnChange
           >
-            <div className="flex flex-col flex-grow">
-              <TopBar />
-              <Header />
-              <Navbar />
-              <main className="flex-grow">{children}</main>
-            </div>
-            <Footer />
+            <LayoutWrapper>{children}</LayoutWrapper>
           </ThemeProvider>
         </Providers>
       </body>
