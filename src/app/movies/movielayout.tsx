@@ -1,81 +1,82 @@
-'use client';
+'use client'
 
-import { useEffect, useState, useRef } from "react";
-import Link from "next/link";
-import { AiOutlineLeft, AiOutlineRight } from "react-icons/ai";
+import { useEffect, useState, useRef } from "react"
+import Link from "next/link"
+import Image from "next/image"
+import { AiOutlineLeft, AiOutlineRight } from "react-icons/ai"
 import {
   fetchEnglishMovies,
   fetchKannadaMovies,
   fetchHindiMovies,
   fetchSportsMovies
-} from "@/services/moviesApi";
+} from "@/services/moviesApi"
 
 interface Movie {
-  Title: string;
-  Year: string;
-  imdbID: string;
-  Poster: string;
+  Title: string
+  Year: string
+  imdbID: string
+  Poster: string
 }
 
 interface MoviesLayoutProps {
-  searchTerm?: string;
+  searchTerm?: string
 }
 
 export const MoviesLayout = ({ searchTerm = '' }: MoviesLayoutProps) => {
-  const [englishMovies, setEnglishMovies] = useState<Movie[]>([]);
-  const [kannadaMovies, setKannadaMovies] = useState<Movie[]>([]);
-  const [hindiMovies, setHindiMovies] = useState<Movie[]>([]);
-  const [sportsMovies, setSportsMovies] = useState<Movie[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [englishMovies, setEnglishMovies] = useState<Movie[]>([])
+  const [kannadaMovies, setKannadaMovies] = useState<Movie[]>([])
+  const [hindiMovies, setHindiMovies] = useState<Movie[]>([])
+  const [sportsMovies, setSportsMovies] = useState<Movie[]>([])
+  const [isLoading, setIsLoading] = useState(true)
 
-  const englishCardContainerRef = useRef<HTMLDivElement | null>(null);
-  const kannadaCardContainerRef = useRef<HTMLDivElement | null>(null);
-  const hindiCardContainerRef = useRef<HTMLDivElement | null>(null);
-  const sportsCardContainerRef = useRef<HTMLDivElement | null>(null);
+  const englishCardContainerRef = useRef<HTMLDivElement | null>(null)
+  const kannadaCardContainerRef = useRef<HTMLDivElement | null>(null)
+  const hindiCardContainerRef = useRef<HTMLDivElement | null>(null)
+  const sportsCardContainerRef = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        setIsLoading(true);
+        setIsLoading(true)
         const [english, kannada, hindi, sports] = await Promise.all([
           fetchEnglishMovies(),
           fetchKannadaMovies(),
           fetchHindiMovies(),
           fetchSportsMovies()
-        ]);
+        ])
 
-        setEnglishMovies(english);
-        setKannadaMovies(kannada);
-        setHindiMovies(hindi);
-        setSportsMovies(sports);
+        setEnglishMovies(english)
+        setKannadaMovies(kannada)
+        setHindiMovies(hindi)
+        setSportsMovies(sports)
       } catch (error) {
-        console.error("Error fetching movies:", error);
+        console.error("Error fetching movies:", error)
       } finally {
-        setIsLoading(false);
+        setIsLoading(false)
       }
-    };
+    }
 
-    fetchData();
-  }, []);
+    fetchData()
+  }, [])
 
   const filterMovies = (movies: Movie[]) => {
-    if (!searchTerm) return movies;
+    if (!searchTerm) return movies
     return movies.filter((movie) =>
       movie.Title && movie.Title.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-  };
+    )
+  }
 
   const scrollLeft = (ref: React.RefObject<HTMLDivElement | null>) => {
     if (ref.current) {
-      ref.current.scrollLeft -= 300;
+      ref.current.scrollLeft -= 300
     }
-  };
+  }
 
   const scrollRight = (ref: React.RefObject<HTMLDivElement | null>) => {
     if (ref.current) {
-      ref.current.scrollLeft += 300;
+      ref.current.scrollLeft += 300
     }
-  };
+  }
 
   if (isLoading) {
     return (
@@ -97,7 +98,7 @@ export const MoviesLayout = ({ searchTerm = '' }: MoviesLayoutProps) => {
           ))}
         </div>
       </div>
-    );
+    )
   }
 
   const renderMovieSection = (
@@ -138,12 +139,14 @@ export const MoviesLayout = ({ searchTerm = '' }: MoviesLayoutProps) => {
                 className="flex-shrink-0 w-40 group"
               >
                 <div className="relative overflow-hidden rounded-lg h-56 bg-gray-100 shadow-md transition-transform duration-300 group-hover:scale-105">
-                  <img
+                  <Image
                     src={movie.Poster !== 'N/A' ? movie.Poster : '/placeholder-movie.png'}
                     alt={movie.Title}
-                    className="w-full h-full object-cover"
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 100vw, 33vw"
                     onError={(e) => {
-                      (e.target as HTMLImageElement).src = '/placeholder-movie.png';
+                      (e.target as HTMLImageElement).src = '/placeholder-movie.png'
                     }}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-3">
@@ -157,12 +160,14 @@ export const MoviesLayout = ({ searchTerm = '' }: MoviesLayoutProps) => {
               </Link>
             ))
           ) : (
-            <p className="text-gray-500 px-4">No movies found matching "{searchTerm}"</p>
+            <p className="text-gray-500 px-4">
+              No movies found matching &quot;{searchTerm}&quot;
+            </p>
           )}
         </div>
       </div>
     </div>
-  );
+  )
 
   return (
     <div className="bg-white min-h-screen py-8">
@@ -173,5 +178,5 @@ export const MoviesLayout = ({ searchTerm = '' }: MoviesLayoutProps) => {
         {renderMovieSection("Sports News", sportsMovies, sportsCardContainerRef)}
       </div>
     </div>
-  );
-};
+  )
+}

@@ -2,15 +2,21 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   images: {
-    domains: ['picsum.photos'],
     remotePatterns: [
       {
         protocol: 'https',
         hostname: 'm.media-amazon.com',
+        pathname: '/images/**',
       },
       {
         protocol: 'https',
         hostname: 'via.placeholder.com',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'picsum.photos',
+        pathname: '/**', 
       },
     ],
   },
