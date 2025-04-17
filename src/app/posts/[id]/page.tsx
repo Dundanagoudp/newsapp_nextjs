@@ -130,7 +130,8 @@ export default async function PostPage({ params }: { params: { id: string } }) {
         </article>
       </Suspense>
     );
-  } catch (error) {
+  }  catch {
     notFound();
   }
+  
 }
