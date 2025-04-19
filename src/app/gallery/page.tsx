@@ -1,4 +1,5 @@
 // import GalleryImages from '@/components/galleryimages'
+import GalleryImages from '@/components/galleryimages'
 import ImageUpload from '@/components/imageupload'
 import React from 'react'
 
@@ -14,7 +15,7 @@ const Page = () => {
       {/* Right: Gallery Section */}
       <div className="w-[60%] bg-white p-4 rounded-xl shadow-md overflow-y-auto">
         <h2 className="text-xl font-semibold mb-4">Gallery</h2>
-        {/* <GalleryImages /> */}
+        <GalleryImages />
       </div>
     </div>
   )

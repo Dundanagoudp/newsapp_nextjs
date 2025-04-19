@@ -1,25 +1,51 @@
-const API_BASE_URL = process.env.NEXT_BACKEND_URL || 'http://localhost:4000';
+// imageService.ts
 
-export interface UploadedImage {
-  _id: string;
-  filename: string;
-  originalName: string;
-  mimeType: string;
-  size: number;
-  url: string;
-  createdAt: string;
+// Utility function to get cookie value
+function getCookie(name: string): string | null {
+  if (typeof document === 'undefined') return null; // For SSR compatibility
+  
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop()?.split(';').shift() || null;
+  return null;
+}
+
+// Utility function to get token from storage
+function getAuthToken(): string | null {
+  // Check localStorage first
+  if (typeof localStorage !== 'undefined') {
+    const token = localStorage.getItem('authToken');
+    if (token) return token;
+  }
+  
+  // Fallback to cookies
+  return getCookie('authToken');
 }
 
 
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:4000';
+
+export interface UploadedImage {
+  _id: string;
+  url: string;
+  userId: string;
+  createdAt: string;
+  updatedAt: string;
+  __v?: number;
+}
+
 export interface UploadResponse {
   success: boolean;
-  message: string;
   data: {
     id: string;
     url: string;
-    path: string;
-    filename: string;
   };
+}
+
+export interface GetAllImagesResponse {
+  success: boolean;
+  count: number;
+  data: UploadedImage[];
 }
 
 export class ImageUploadError extends Error {
@@ -33,18 +59,37 @@ export class ImageUploadError extends Error {
     this.details = details;
   }
 }
+export interface UploadedImage {
+  _id: string;
+  url: string;
+  userId: string;
+  createdAt: string;
+  updatedAt: string;
+  __v?: number;
+}
+
+export interface GetAllImagesResponse {
+  success: boolean;
+  count: number;
+  data: UploadedImage[];
+}
 
 export const imageService = {
   async uploadImage(file: File, token?: string): Promise<UploadResponse> {
     const formData = new FormData();
-    formData.append("image", file); // Changed from "file" to "image"
+    formData.append("image", file);
 
     const headers: Record<string, string> = {
       'Accept': 'application/json'
     };
     
-    if (token) {
-      headers['Authorization'] = `Bearer ${token}`;
+    // Get token from parameters or storage
+    const authToken = token || getAuthToken();
+    
+    if (authToken) {
+      headers['Authorization'] = `Bearer ${authToken}`;
+    } else {
+      throw new ImageUploadError('Authentication token is required', 401);
     }
 
     try {
@@ -54,6 +99,14 @@ export const imageService = {
         headers,
         credentials: 'include',
       });
+
+      if (res.status === 401) {
+        throw new ImageUploadError(
+          'Session expired. Please login again.',
+          401,
+          { requiresLogin: true }
+        );
+      }
 
       const data = await res.json();
       
@@ -75,47 +128,15 @@ export const imageService = {
     }
   },
 
-  async getImageById(id: string, token?: string): Promise<UploadedImage> {
-    const headers: Record<string, string> = {};
-    if (token) {
-      headers['Authorization'] = `Bearer ${token}`;
-    }
-
-    try {
-      const res = await fetch(`${API_BASE_URL}/image/${id}`, { 
-        headers,
-        credentials: 'include', 
-      });
-
-      if (!res.ok) {
-        let errorData;
-        try {
-          errorData = await res.json();
-        } catch (e) {
-          throw new ImageUploadError(`Fetch failed with status ${res.status}`, res.status);
-        }
-        throw new ImageUploadError(
-          errorData.message || `Failed to fetch image with status ${res.status}`,
-          res.status
-        );
-      }
-
-      return await res.json();
-    } catch (error) {
-      if (error instanceof Error) {
-        throw new ImageUploadError(error.message);
-      }
-      throw new ImageUploadError('Unknown fetch error occurred');
-    }
-  },
-
   async getAllImages(token?: string): Promise<UploadedImage[]> {
     const headers: Record<string, string> = {
       'Accept': 'application/json'
     };
     
-    if (token) {
-      headers['Authorization'] = `Bearer ${token}`;
+    const authToken = token || getAuthToken();
+    
+    if (authToken) {
+      headers['Authorization'] = `Bearer ${authToken}`;
     }
 
     try {
@@ -126,18 +147,63 @@ export const imageService = {
 
       if (!res.ok) {
         const errorData = await res.json();
-        throw new Error(errorData.message || 'Failed to fetch images');
+        throw new ImageUploadError(
+          errorData.message || 'Failed to fetch images',
+          res.status,
+          errorData
+        );
       }
 
-      return await res.json();
+      const response: GetAllImagesResponse = await res.json();
+      return response.data;
     } catch (error) {
-      console.error('Fetch images error:', error);
-      throw error;
+      if (error instanceof ImageUploadError) throw error;
+      if (error instanceof Error) {
+        throw new ImageUploadError(error.message);
+      }
+      throw new ImageUploadError('Unknown fetch error occurred');
     }
   },
 
   getImageUrl(id: string): string {
     return `${API_BASE_URL}/image/${id}`;
-  }
+  },
 
+  async deleteImage(id: string, token?: string): Promise<void> {
+    const headers: Record<string, string> = {
+      'Accept': 'application/json'
+    };
+    
+    // Get token from parameters or storage
+    const authToken = token || getAuthToken();
+    
+    if (authToken) {
+      headers['Authorization'] = `Bearer ${authToken}`;
+    } else {
+      throw new ImageUploadError('Authentication token is required', 401);
+    }
+
+    try {
+      const res = await fetch(`${API_BASE_URL}/image/${id}`, {
+        method: "DELETE",
+        headers,
+        credentials: 'include',
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new ImageUploadError(
+          errorData.message || `Failed to delete image with status ${res.status}`,
+          res.status,
+          errorData
+        );
+      }
+    } catch (error) {
+      if (error instanceof ImageUploadError) throw error;
+      if (error instanceof Error) {
+        throw new ImageUploadError(error.message);
+      }
+      throw new ImageUploadError('Unknown delete error occurred');
+    }
+  }
 };
