@@ -13,7 +13,7 @@ export interface UploadedImage {
   __v?: number;
 }
 
-const POLLING_INTERVAL = 5000; // 5 seconds
+const POLLING_INTERVAL = 5000; 
 
 const GalleryImages = () => {
   const [images, setImages] = useState<UploadedImage[]>([]);
