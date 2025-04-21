@@ -15,6 +15,19 @@ export default function ImageUploader() {
   const [error, setError] = useState<string>("");
   const [uploadedImage, setUploadedImage] = useState<{ id: string; url: string } | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isAdmin, setIsAdmin] = useState<boolean>(false);
+
+  useEffect(() => {
+    const checkAdminStatus = async () => {
+      try {
+        const isUserAdmin = false;
+        setIsAdmin(isUserAdmin);
+      } catch (err) {
+        setIsAdmin(false);
+      }
+    };
+    checkAdminStatus();
+  }, []);
 
   useEffect(() => {
     if (status === "success") {
@@ -65,6 +78,11 @@ export default function ImageUploader() {
 
     try {
       const res = await imageService.uploadImage(file);
+
+      if (res.error === "Access Denied") {
+        throw new Error("Access Denied");
+      }
+
       clearInterval(simulateProgress);
       setUploadProgress(100);
       setStatus("success");
@@ -75,7 +93,16 @@ export default function ImageUploader() {
     } catch (err) {
       clearInterval(simulateProgress);
       setStatus("error");
-      setError("Upload failed. Please try again.");
+
+      let errorMessage = "Upload failed. Please try again.";
+      if (err instanceof Error) {
+        errorMessage =
+          err.message === "Access Denied"
+            ? "Access Denied. Only admins can upload images."
+            : "access denied only admins can upload images";
+      }
+
+      setError(errorMessage);
     }
   };
 
@@ -108,6 +135,9 @@ export default function ImageUploader() {
         >
           <UploadCloud className="w-8 h-8 text-gray-400 mx-auto mb-2" />
           <p className="text-sm text-gray-600">Click to upload image (max 5MB)</p>
+          {!isAdmin && (
+            <p className="text-xs text-red-500 mt-2">Only admins can upload images</p>
+          )}
         </div>
       )}
 

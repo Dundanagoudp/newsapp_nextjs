@@ -40,6 +40,7 @@ export interface UploadResponse {
     id: string;
     url: string;
   };
+  error?: string;
 }
 
 export interface GetAllImagesResponse {
