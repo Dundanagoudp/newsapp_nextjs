@@ -15,4 +15,4 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 
 // Get a reference to the storage service
-export const storage = getStorage(app);
+export const storage = getStorage(app);3
